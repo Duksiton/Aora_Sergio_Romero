@@ -1,13 +1,20 @@
+// Welcome.jsx
+import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { Redirect, router } from "expo-router";
 import { View, Text, Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 import { images } from "../constants";
 import { CustomButton, Loader } from "../components";
 import { useGlobalContext } from "../context/GlobalProvider";
 
+// Importa la configuración de i18n
+import "../i18n";
+
 const Welcome = () => {
+  const { t, i18n } = useTranslation(); // Hook para traducción
   const { loading, isLogged } = useGlobalContext();
 
   if (!loading && isLogged) return <Redirect href="/home" />;
@@ -36,8 +43,7 @@ const Welcome = () => {
 
           <View className="relative mt-5">
             <Text className="text-3xl text-white font-bold text-center">
-              Discover Endless{"\n"}
-              Possibilities with{" "}
+              {t("discover_endless_possibilities_with")}{" "}
               <Text className="text-secondary-200">Aora</Text>
             </Text>
 
@@ -49,15 +55,30 @@ const Welcome = () => {
           </View>
 
           <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
-            Where Creativity Meets Innovation: Embark on a Journey of Limitless
-            Exploration with Aora
+            {t("where_creativity_meets_innovation")}
           </Text>
 
           <CustomButton
-            title="Continue with Email"
+            title={t("continue_with_email")}
             handlePress={() => router.push("/sign-in")}
             containerStyles="w-full mt-7"
           />
+
+          {/* Botones para cambiar el idioma */}
+          <View className="flex flex-row justify-center gap-4 mt-6">
+            <CustomButton
+              title={t("english")}
+              handlePress={() => i18n.changeLanguage("en")}
+              containerStyles="bg-secondary-200 w-[150px]" // Ajusta el ancho aquí
+              textStyles="text-white"
+            />
+            <CustomButton
+              title={t("spanish")}
+              handlePress={() => i18n.changeLanguage("es")}
+              containerStyles="bg-secondary-200 w-[150px]" // Ajusta el ancho aquí
+              textStyles="text-white"
+            />
+          </View>
         </View>
       </ScrollView>
 

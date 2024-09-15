@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
+import { useTranslation } from 'react-i18next';  
 
 import { images } from "../../constants";
 import useAppwrite from "../../lib/useAppwrite";
 import { getAllPosts, getLatestPosts } from "../../lib/appwrite";
-import { EmptyState, SearchInput, Trending, VideoCard } from "../../components";
+import { EmptyState, SearchInput, Trending, VideoCard, CustomButton } from "../../components";
 
 const Home = () => {
+  const { t, i18n } = useTranslation(); 
   const { data: posts, refetch } = useAppwrite(getAllPosts);
   const { data: latestPosts } = useAppwrite(getLatestPosts);
 
@@ -19,11 +21,9 @@ const Home = () => {
     setRefreshing(false);
   };
 
-  // one flatlist
-  // with list header
-  // and horizontal flatlist
-
-  //  we cannot do that with just scrollview as there's both horizontal and vertical scroll (two flat lists, within trending)
+  const handleChangeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  };
 
   return (
     <SafeAreaView className="bg-primary">
@@ -44,12 +44,27 @@ const Home = () => {
             <View className="flex justify-between items-start flex-row mb-6">
               <View>
                 <Text className="font-pmedium text-sm text-gray-100">
-                  Welcome Back
+                  {t('welcome_back')}  
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  ¡Aora!
+                  {t('app_name')}  
                 </Text>
               </View>
+
+              <View className="flex flex-row justify-center gap-4 mt-6">
+              <CustomButton
+                title={t("english")}
+                handlePress={() => handleChangeLanguage("en")}
+                containerStyles="bg-secondary-200 w-[100px]" // Ajusta el ancho aquí
+                textStyles="text-white"
+              />
+              <CustomButton
+                title={t("spanish")}
+                handlePress={() => handleChangeLanguage("es")}
+                containerStyles="bg-secondary-200 w-[100px]" // Ajusta el ancho aquí
+                textStyles="text-white"
+              />
+            </View>
 
               <View className="mt-1.5">
                 <Image
@@ -64,17 +79,19 @@ const Home = () => {
 
             <View className="w-full flex-1 pt-5 pb-8">
               <Text className="text-lg font-pregular text-gray-100 mb-3">
-                Latest Videos
+                {t('latest_videos')} 
               </Text>
 
               <Trending posts={latestPosts ?? []} />
             </View>
+
+           
           </View>
         )}
         ListEmptyComponent={() => (
           <EmptyState
-            title="No Videos Found"
-            subtitle="No videos created yet"
+            title={t('no_videos_found')}  
+            subtitle={t('no_videos_created')}  
           />
         )}
         refreshControl={

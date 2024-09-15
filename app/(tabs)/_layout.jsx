@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { Redirect, Tabs } from "expo-router";
 import { Image, Text, View } from "react-native";
+import { useTranslation } from 'react-i18next';  
 
 import { icons } from "../../constants";
 import { Loader } from "../../components";
@@ -26,6 +27,7 @@ const TabIcon = ({ icon, color, name, focused }) => {
 };
 
 const TabLayout = () => {
+  const { t } = useTranslation(); 
   const { loading, isLogged } = useGlobalContext();
 
   if (!loading && !isLogged) return <Redirect href="/sign-in" />;
@@ -48,13 +50,13 @@ const TabLayout = () => {
         <Tabs.Screen
           name="home"
           options={{
-            title: "Home",
+            title: t('home'),
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.home}
                 color={color}
-                name="Home"
+                name={t('home')}
                 focused={focused}
               />
             ),
@@ -63,29 +65,28 @@ const TabLayout = () => {
         <Tabs.Screen
           name="bookmark"
           options={{
-            title: "Bookmark",
+            title: t('bookmark'),
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.bookmark}
                 color={color}
-                name="Bookmark"
+                name={t('bookmark')}
                 focused={focused}
               />
             ),
           }}
         />
-
         <Tabs.Screen
           name="create"
           options={{
-            title: "Create",
+            title: t('create'),
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.plus}
                 color={color}
-                name="Create"
+                name={t('create')}
                 focused={focused}
               />
             ),
@@ -94,13 +95,13 @@ const TabLayout = () => {
         <Tabs.Screen
           name="profile"
           options={{
-            title: "Profile",
+            title: t('profile'),
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.profile}
                 color={color}
-                name="Profile"
+                name={t('profile')}
                 focused={focused}
               />
             ),

@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { useTranslation } from 'react-i18next';  
 
 import { icons } from "../../constants";
 import { createVideoPost } from "../../lib/appwrite";
@@ -18,6 +19,7 @@ import { CustomButton, FormField } from "../../components";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Create = () => {
+  const { t } = useTranslation();
   const { user } = useGlobalContext();
   const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
@@ -58,12 +60,12 @@ const Create = () => {
 
   const submit = async () => {
     if (
-      (form.prompt === "") |
-      (form.title === "") |
-      !form.thumbnail |
+      (form.prompt === "") ||
+      (form.title === "") ||
+      !form.thumbnail ||
       !form.video
     ) {
-      return Alert.alert("Please provide all fields");
+      return Alert.alert(t("missing_fields"));
     }
 
     setUploading(true);
@@ -73,10 +75,10 @@ const Create = () => {
         userId: user.$id,
       });
 
-      Alert.alert("Success", "Post uploaded successfully");
+      Alert.alert(t("success"), t("post_uploaded_successfully"));
       router.push("/home");
     } catch (error) {
-      Alert.alert("Error", error.message);
+      Alert.alert(t("error"), error.message);
     } finally {
       setForm({
         title: "",
@@ -92,19 +94,21 @@ const Create = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className="px-4 my-6">
-        <Text className="text-2xl text-white font-psemibold">Upload Video</Text>
+        <Text className="text-2xl text-white font-psemibold">
+          {t('upload_video')}
+        </Text>
 
         <FormField
-          title="Video Title"
+          title={t('video_title')}
           value={form.title}
-          placeholder="Give your video a catchy title..."
+          placeholder={t('video_title_placeholder')}
           handleChangeText={(e) => setForm({ ...form, title: e })}
           otherStyles="mt-10"
         />
 
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 font-pmedium">
-            Upload Video
+            {t('upload_video')}
           </Text>
 
           <TouchableOpacity onPress={() => openPicker("video")}>
@@ -133,7 +137,7 @@ const Create = () => {
 
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 font-pmedium">
-            Thumbnail Image
+            {t('thumbnail_image')}
           </Text>
 
           <TouchableOpacity onPress={() => openPicker("image")}>
@@ -152,7 +156,7 @@ const Create = () => {
                   className="w-5 h-5"
                 />
                 <Text className="text-sm text-gray-100 font-pmedium">
-                  Choose a file
+                  {t('choose_a_file')}
                 </Text>
               </View>
             )}
@@ -160,15 +164,15 @@ const Create = () => {
         </View>
 
         <FormField
-          title="AI Prompt"
+          title={t('ai_prompt')}
           value={form.prompt}
-          placeholder="The AI prompt of your video...."
+          placeholder={t('ai_prompt_placeholder')}
           handleChangeText={(e) => setForm({ ...form, prompt: e })}
           otherStyles="mt-7"
         />
 
         <CustomButton
-          title="Submit & Publish"
+          title={t('submit_publish')}
           handlePress={submit}
           containerStyles="mt-7"
           isLoading={uploading}

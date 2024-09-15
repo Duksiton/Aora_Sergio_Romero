@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Image, FlatList, TouchableOpacity } from "react-native";
+import { useTranslation } from 'react-i18next';
 
 import { icons } from "../../constants";
 import useAppwrite from "../../lib/useAppwrite";
@@ -9,6 +10,7 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 import { EmptyState, InfoBox, VideoCard } from "../../components";
 
 const Profile = () => {
+  const { t } = useTranslation();
   const { user, setUser, setIsLogged } = useGlobalContext();
   const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
 
@@ -36,8 +38,8 @@ const Profile = () => {
         )}
         ListEmptyComponent={() => (
           <EmptyState
-            title="No Videos Found"
-            subtitle="No videos found for this profile"
+            title={t("no_videos_found")}
+            subtitle={t("no_videos_found_subtitle")}
           />
         )}
         ListHeaderComponent={() => (
@@ -70,13 +72,13 @@ const Profile = () => {
             <View className="mt-5 flex flex-row">
               <InfoBox
                 title={posts.length || 0}
-                subtitle="Posts"
+                subtitle={t('posts')}
                 titleStyles="text-xl"
                 containerStyles="mr-10"
               />
               <InfoBox
                 title="1.2k"
-                subtitle="Followers"
+                subtitle={t('followers')}
                 titleStyles="text-xl"
               />
             </View>

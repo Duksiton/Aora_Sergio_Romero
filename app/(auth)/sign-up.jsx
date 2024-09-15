@@ -1,14 +1,28 @@
+// SignUp.jsx
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  Alert,
+  Image,
+  Button,
+} from "react-native";
+import { useTranslation } from "react-i18next";
 
 import { images } from "../../constants";
 import { createUser } from "../../lib/appwrite";
 import { CustomButton, FormField } from "../../components";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
+// Importa la configuración de i18n
+import "../../i18n";
+
 const SignUp = () => {
+  const { t, i18n } = useTranslation(); // Hook para traducción
   const { setUser, setIsLogged } = useGlobalContext();
 
   const [isSubmitting, setSubmitting] = useState(false);
@@ -20,7 +34,8 @@ const SignUp = () => {
 
   const submit = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert(t("error"), t("please_fill_all_fields"));
+      return;
     }
 
     setSubmitting(true);
@@ -31,7 +46,7 @@ const SignUp = () => {
 
       router.replace("/home");
     } catch (error) {
-      Alert.alert("Error", error.message);
+      Alert.alert(t("error"), error.message);
     } finally {
       setSubmitting(false);
     }
@@ -53,18 +68,18 @@ const SignUp = () => {
           />
 
           <Text className="text-2xl font-semibold text-white mt-10 font-psemibold">
-            Sign Up to Aora
+            {t("sign_up_to_aora")}
           </Text>
 
           <FormField
-            title="Username"
+            title={t("username")}
             value={form.username}
             handleChangeText={(e) => setForm({ ...form, username: e })}
             otherStyles="mt-10"
           />
 
           <FormField
-            title="Email"
+            title={t("email")}
             value={form.email}
             handleChangeText={(e) => setForm({ ...form, email: e })}
             otherStyles="mt-7"
@@ -72,14 +87,14 @@ const SignUp = () => {
           />
 
           <FormField
-            title="Password"
+            title={t("password")}
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-7"
           />
 
           <CustomButton
-            title="Sign Up"
+            title={t("sign_up")}
             handlePress={submit}
             containerStyles="mt-7"
             isLoading={isSubmitting}
@@ -87,14 +102,30 @@ const SignUp = () => {
 
           <View className="flex justify-center pt-5 flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">
-              Have an account already?
+              {t("have_an_account")}
             </Text>
             <Link
               href="/sign-in"
               className="text-lg font-psemibold text-secondary"
             >
-              Login
+              {t("login")}
             </Link>
+          </View>
+
+          {/* Botones para cambiar idioma */}
+          <View className="flex flex-row justify-center gap-4 mt-6">
+            <CustomButton
+              title={t("english")}
+              handlePress={() => i18n.changeLanguage("en")}
+              containerStyles="bg-secondary-200 w-[150px]" // Ajusta el ancho aquí
+              textStyles="text-white"
+            />
+            <CustomButton
+              title={t("spanish")}
+              handlePress={() => i18n.changeLanguage("es")}
+              containerStyles="bg-secondary-200 w-[150px]" // Ajusta el ancho aquí
+              textStyles="text-white"
+            />
           </View>
         </View>
       </ScrollView>

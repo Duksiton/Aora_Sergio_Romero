@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { router, usePathname } from "expo-router";
 import { View, TouchableOpacity, Image, TextInput, Alert } from "react-native";
+import { useTranslation } from 'react-i18next';
 
 import { icons } from "../constants";
 
 const SearchInput = ({ initialQuery }) => {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery || "");
 
@@ -13,7 +15,7 @@ const SearchInput = ({ initialQuery }) => {
       <TextInput
         className="text-base mt-0.5 text-white flex-1 font-pregular"
         value={query}
-        placeholder="Search a video topic"
+        placeholder={t("search_a_video_topic")}
         placeholderTextColor="#CDCDE0"
         onChangeText={(e) => setQuery(e)}
       />
@@ -22,8 +24,8 @@ const SearchInput = ({ initialQuery }) => {
         onPress={() => {
           if (query === "")
             return Alert.alert(
-              "Missing Query",
-              "Please input something to search results across database"
+              t("missing_query"),
+              t("please_input_something")
             );
 
           if (pathname.startsWith("/search")) router.setParams({ query });
