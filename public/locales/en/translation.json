@@ -46,5 +46,14 @@
   "no_videos_found": "No Videos Found",
   "no_videos_found_subtitle": "No videos found for this profile",
   "followers": "Followers",
-  "posts": "Posts"
+  "posts": "Posts",
+  "login_title": "Log in to Aora",
+  "email_label": "Email",
+  "password_label": "Password",
+  "sign_in_button": "Sign In",
+  "no_account_text": "Don't have an account?",
+  "signup_link": "Signup",
+  "error_fill_fields": "Please fill in all fields",
+  "success_sign_in": "User signed in successfully",
+  "error_sign_in": "Error signing in"
 }

@@ -1,104 +1,122 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Image, RefreshControl, Text, View } from "react-native";
-import { useTranslation } from 'react-i18next';  
+import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import { useTranslation } from 'react-i18next'; // Importa useTranslation
 
 import { images } from "../../constants";
-import useAppwrite from "../../lib/useAppwrite";
-import { getAllPosts, getLatestPosts } from "../../lib/appwrite";
-import { EmptyState, SearchInput, Trending, VideoCard, CustomButton } from "../../components";
+import { CustomButton, FormField } from "../../components";
+import { getCurrentUser, signIn } from "../../lib/appwrite";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
-const Home = () => {
-  const { t, i18n } = useTranslation(); 
-  const { data: posts, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
+const SignIn = () => {
+  const { t, i18n } = useTranslation(); // Usa useTranslation para obtener t y i18n
+  const { setUser, setIsLogged } = useGlobalContext();
+  const [isSubmitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
-  const [refreshing, setRefreshing] = useState(false);
+  const submit = async () => {
+    if (form.email === "" || form.password === "") {
+      Alert.alert(t("error_sign_in"), t("error_fill_fields"));
+      return;
+    }
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
+    setSubmitting(true);
+
+    try {
+      await signIn(form.email, form.password);
+      const result = await getCurrentUser();
+      setUser(result);
+      setIsLogged(true);
+
+      Alert.alert(t("success_sign_in"));
+      router.replace("/home");
+    } catch (error) {
+      Alert.alert(t("error_sign_in"), error.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleChangeLanguage = (lang) => {
+  const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
   };
 
   return (
-    <SafeAreaView className="bg-primary">
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <VideoCard
-            title={item.title}
-            thumbnail={item.thumbnail}
-            video={item.video}
-            creator={item.creator.username}
-            avatar={item.creator.avatar}
+    <SafeAreaView className="bg-primary h-full">
+      <ScrollView>
+        <View
+          className="w-full flex justify-center h-full px-4 my-6"
+          style={{
+            minHeight: Dimensions.get("window").height - 100,
+          }}
+        >
+          <Image
+            source={images.logo}
+            resizeMode="contain"
+            className="w-[115px] h-[34px]"
           />
-        )}
-        ListHeaderComponent={() => (
-          <View className="flex my-6 px-4 space-y-6">
-            <View className="flex justify-between items-start flex-row mb-6">
-              <View>
-                <Text className="font-pmedium text-sm text-gray-100">
-                  {t('welcome_back')}  
-                </Text>
-                <Text className="text-2xl font-psemibold text-white">
-                  {t('app_name')}  
-                </Text>
-              </View>
 
-              <View className="mt-1.5">
-                <Image
-                  source={images.logoSmall}
-                  className="w-9 h-10"
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
+          <Text className="text-2xl font-semibold text-white mt-10 font-psemibold">
+            {t("login_title")}
+          </Text>
 
-            <SearchInput />
+          <FormField
+            title={t("email_label")}
+            value={form.email}
+            handleChangeText={(e) => setForm({ ...form, email: e })}
+            otherStyles="mt-7"
+            keyboardType="email-address"
+          />
 
-            <View className="w-full flex-1 pt-5 pb-8">
-              <Text className="text-lg font-pregular text-gray-100 mb-3">
-                {t('latest_videos')} 
-              </Text>
+          <FormField
+            title={t("password_label")}
+            value={form.password}
+            handleChangeText={(e) => setForm({ ...form, password: e })}
+            otherStyles="mt-7"
+          />
 
-              <Trending posts={latestPosts ?? []} />
-            </View>
+          <CustomButton
+            title={t("sign_in_button")}
+            handlePress={submit}
+            containerStyles="mt-7"
+            isLoading={isSubmitting}
+          />
 
-            {/* Language Switcher Buttons */}
-            <View className="flex flex-row justify-center gap-4 mt-6">
-              <CustomButton
-                title={t("english")}
-                handlePress={() => handleChangeLanguage("en")}
-                containerStyles="bg-secondary-200 w-[150px]" // Ajusta el ancho aquí
-                textStyles="text-white"
-              />
-              <CustomButton
-                title={t("spanish")}
-                handlePress={() => handleChangeLanguage("es")}
-                containerStyles="bg-secondary-200 w-[150px]" // Ajusta el ancho aquí
-                textStyles="text-white"
-              />
-            </View>
+          <View className="flex justify-center pt-5 flex-row gap-2">
+            <Text className="text-lg text-gray-100 font-pregular">
+              {t("no_account_text")}
+            </Text>
+            <Link
+              href="/sign-up"
+              className="text-lg font-psemibold text-secondary"
+            >
+              {t("signup_link")}
+            </Link>
           </View>
-        )}
-        ListEmptyComponent={() => (
-          <EmptyState
-            title={t('no_videos_found')}  
-            subtitle={t('no_videos_created')}  
-          />
-        )}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+
+          {/* Botones para cambiar el idioma */}
+          <View className="flex flex-row justify-center gap-4 mt-6">
+            <CustomButton
+              title={t("english")}
+              handlePress={() => handleLanguageChange("en")}
+              containerStyles="bg-secondary-200 w-[150px]" // Ajusta el ancho aquí
+              textStyles="text-white"
+            />
+            <CustomButton
+              title={t("spanish")}
+              handlePress={() => handleLanguageChange("es")}
+              containerStyles="bg-secondary-200 w-[150px]" // Ajusta el ancho aquí
+              textStyles="text-white"
+            />
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Home;
+export default SignIn;

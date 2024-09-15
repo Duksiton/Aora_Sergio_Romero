@@ -46,5 +46,14 @@
   "no_videos_found": "No se Encontraron Videos",
   "no_videos_found_subtitle": "No se encontraron videos para este perfil",
   "followers": "Seguidores",
-  "posts": "Publicaciones"
+  "posts": "Publicaciones",
+  "login_title": "Inicia sesión en Aora",
+  "email_label": "Correo electrónico",
+  "password_label": "Contraseña",
+  "sign_in_button": "Iniciar sesión",
+  "no_account_text": "¿No tienes una cuenta?",
+  "signup_link": "Registrarse",
+  "error_fill_fields": "Por favor, rellena todos los campos",
+  "success_sign_in": "Usuario iniciado sesión correctamente",
+  "error_sign_in": "Error al iniciar sesión"
 }
